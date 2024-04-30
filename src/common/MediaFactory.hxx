@@ -55,6 +55,9 @@
 #elif defined(SDL_SUPPORT)
   #include "EventHandlerSDL2.hxx"
   #include "FBBackendSDL2.hxx"
+#elif defined(__USE_BIZHAWK)
+  #include "EventHandlerBizhawk.hxx"
+  #include "FBBackendBizhawk.hxx"
 #else
   #error Unsupported backend!
 #endif
@@ -134,6 +137,8 @@ class MediaFactory
       return make_unique<FBBackendLIBRETRO>(osystem);
     #elif defined(SDL_SUPPORT)
       return make_unique<FBBackendSDL2>(osystem);
+    #elif defined(__USE_BIZHAWK)
+      return make_unique<FBBackendBizhawk>(osystem);
     #else
       #error Unsupported platform for FrameBuffer!
     #endif
@@ -146,6 +151,8 @@ class MediaFactory
         return make_unique<SoundLIBRETRO>(osystem, audioSettings);
       #elif defined(SOUND_SUPPORT) && defined(SDL_SUPPORT)
         return make_unique<SoundSDL2>(osystem, audioSettings);
+      #elif defined(__USE_BIZHAWK)
+        return make_unique<SoundBizhawk>(osystem);        
       #else
         return make_unique<SoundNull>(osystem);
       #endif
@@ -160,6 +167,8 @@ class MediaFactory
       return make_unique<EventHandlerLIBRETRO>(osystem);
     #elif defined(SDL_SUPPORT)
       return make_unique<EventHandlerSDL2>(osystem);
+    #elif defined(__USE_BIZHAWK)
+      return make_unique<EventHandlerBizhawk>(osystem);    
     #else
       #error Unsupported platform for EventHandler!
     #endif
