@@ -29,6 +29,8 @@ class AbstractFSNode;
   #include "FSNodeWINDOWS.hxx"
 #elif defined(__LIB_RETRO__)
   #include "FSNodeLIBRETRO.hxx"
+#elif defined(__USE_BIZHAWK)
+  #include "FSNodeBizhawk.hxx"
 #else
   #error Unsupported platform in FSNodeFactory!
 #endif
@@ -55,6 +57,8 @@ class FSNodeFactory
           return make_unique<FSNodeWINDOWS>(path);
         #elif defined(__LIB_RETRO__)
           return make_unique<FSNodeLIBRETRO>(path);
+        #elif defined(__USE_BIZHAWK)
+          return make_unique<FSNodeBIZHAWK>(path);
         #endif
           break;
         case Type::ZIP:

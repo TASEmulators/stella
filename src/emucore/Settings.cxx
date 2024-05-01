@@ -322,17 +322,17 @@ Settings::Settings()
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void Settings::setRepository(shared_ptr<KeyValueRepository> repository)
 {
-  myRespository = std::move(repository);
+  // myRespository = std::move(repository);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void Settings::load(const Options& options)
 {
-  const Options fromFile = myRespository->load();
-  for (const auto& opt: fromFile)
-    setValue(opt.first, opt.second, false);
+  // const Options fromFile = myRespository->load();
+  // for (const auto& opt: fromFile)
+  //   setValue(opt.first, opt.second, false);
 
-  migrate();
+  // migrate();
 
   // Apply commandline options, which override those from settings file
   for(const auto& opt: options)
@@ -346,7 +346,7 @@ void Settings::load(const Options& options)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void Settings::save()
 {
-  myRespository->save(myPermanentSettings);
+  // myRespository->save(myPermanentSettings);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

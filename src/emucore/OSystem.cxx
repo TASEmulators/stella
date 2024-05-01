@@ -230,25 +230,25 @@ void OSystem::loadConfig(const Settings::Options& options)
 
   initPersistence(myBaseDir);
 
-  mySettings->setRepository(getSettingsRepository());
-  myPropSet->setRepository(getPropertyRepository());
+  // mySettings->setRepository(getSettingsRepository());
+  // myPropSet->setRepository(getPropertyRepository());
 
   mySettings->load(options);
 
-  // userDir is NOT affected by '-baseDir'and '-basedirinapp' params
-  string userDir = mySettings->getString("userdir");
-  if(userDir.empty())
-    userDir = homeDir;
-  myUserDir = FSNode(userDir);
-  if(!myUserDir.isDirectory())
-    myUserDir.makeDir();
+  // // userDir is NOT affected by '-baseDir'and '-basedirinapp' params
+  // string userDir = mySettings->getString("userdir");
+  // if(userDir.empty())
+  //   userDir = homeDir;
+  // myUserDir = FSNode(userDir);
+  // if(!myUserDir.isDirectory())
+  //   myUserDir.makeDir();
 
-  Logger::instance().setLogParameters(mySettings->getInt("loglevel"),
-                                      mySettings->getBool("logtoconsole"));
-  Logger::debug("Loading config options ...");
+  // Logger::instance().setLogParameters(mySettings->getInt("loglevel"),
+  //                                     mySettings->getBool("logtoconsole"));
+  // Logger::debug("Loading config options ...");
 
   // Get updated paths for all configuration files
-  setConfigPaths();
+  // setConfigPaths();
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

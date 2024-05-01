@@ -45,6 +45,8 @@
   }
 #elif defined(__LIB_RETRO__)
   #include "OSystemLIBRETRO.hxx"
+#elif defined(__USE_BIZHAWK)
+  #include "OSystemBizhawk.hxx"
 #else
   #error Unsupported platform!
 #endif
@@ -104,6 +106,8 @@ class MediaFactory
       return make_unique<OSystemMACOS>();
     #elif defined(__LIB_RETRO__)
       return make_unique<OSystemLIBRETRO>();
+    #elif defined(__USE_BIZHAWK)
+      return make_unique<OSystemBIZHAWK>();
     #else
       #error Unsupported platform for OSystem!
     #endif
@@ -138,7 +142,7 @@ class MediaFactory
     #elif defined(SDL_SUPPORT)
       return make_unique<FBBackendSDL2>(osystem);
     #elif defined(__USE_BIZHAWK)
-      return make_unique<FBBackendBizhawk>(osystem);
+      return make_unique<FBBackendBIZHAWK>(osystem);
     #else
       #error Unsupported platform for FrameBuffer!
     #endif
