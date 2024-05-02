@@ -18,6 +18,9 @@
 #ifndef FSNODE_FACTORY_HXX
 #define FSNODE_FACTORY_HXX
 
+#include <memory>
+#include <string> 
+
 class AbstractFSNode;
 
 #if defined(ZIP_SUPPORT)
@@ -29,10 +32,8 @@ class AbstractFSNode;
   #include "FSNodeWINDOWS.hxx"
 #elif defined(__LIB_RETRO__)
   #include "FSNodeLIBRETRO.hxx"
-#elif defined(__USE_BIZHAWK)
-  #include "FSNodeBizhawk.hxx"
 #else
-  #error Unsupported platform in FSNodeFactory!
+  //#error Unsupported platform in FSNodeFactory!
 #endif
 
 /**
@@ -46,24 +47,22 @@ class FSNodeFactory
     enum class Type { SYSTEM, ZIP };
 
   public:
-    static unique_ptr<AbstractFSNode> create(string_view path, Type type)
+    static std::unique_ptr<AbstractFSNode> create(std::string_view path, Type type)
     {
       switch(type)
       {
         case Type::SYSTEM:
         #if defined(BSPF_UNIX) || defined(BSPF_MACOS)
-          return make_unique<FSNodePOSIX>(path);
+          return std::make_unique<FSNodePOSIX>(path);
         #elif defined(BSPF_WINDOWS)
-          return make_unique<FSNodeWINDOWS>(path);
+          return std::make_unique<FSNodeWINDOWS>(path);
         #elif defined(__LIB_RETRO__)
-          return make_unique<FSNodeLIBRETRO>(path);
-        #elif defined(__USE_BIZHAWK)
-          return make_unique<FSNodeBIZHAWK>(path);
+          return std::make_unique<FSNodeLIBRETRO>(path);
         #endif
           break;
         case Type::ZIP:
         #if defined(ZIP_SUPPORT)
-          return make_unique<FSNodeZIP>(path);
+          return std::make_unique<FSNodeZIP>(path);
         #endif
           break;
       }

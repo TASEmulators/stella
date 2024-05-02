@@ -22,6 +22,8 @@
 
 #include "bspf.hxx"
 
+#define BUFFER_SIZE 1024*1024*4
+
 /*
  * The API described in this header is meant to allow for file system browsing in a
  * portable fashion. To this end, multiple or single roots have to be supported
@@ -305,10 +307,15 @@ class FSNode
     string getNameWithExt(string_view ext = "") const;
     string getPathWithExt(string_view ext = "") const;
 
+    uint8_t* getBuffer() const { return _buffer; }
+
   private:
     explicit FSNode(const AbstractFSNodePtr& realNode);
     AbstractFSNodePtr _realNode;
     void setPath(string_view path);
+    std::string _path;
+    uint8_t* _buffer;
+    uint32_t _bufferPos = 0;
 };
 
 

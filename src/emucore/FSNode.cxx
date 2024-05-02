@@ -27,7 +27,8 @@ FSNode::FSNode(const AbstractFSNodePtr& realNode)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 FSNode::FSNode(string_view path)
 {
-  setPath(path);
+  _buffer = (uint8_t*)calloc(1, BUFFER_SIZE);
+  _path = path;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,7 +65,7 @@ FSNode& FSNode::operator/=(string_view path)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 bool FSNode::exists() const
 {
-  return _realNode ? _realNode->exists() : false;
+  return true;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -238,7 +239,7 @@ void FSNode::setName(string_view name)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 const string& FSNode::getPath() const
 {
-  return _realNode ? _realNode->getPath() : EmptyString;
+  return _path;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -296,25 +297,25 @@ FSNode FSNode::getParent() const
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 bool FSNode::isDirectory() const
 {
-  return _realNode ? _realNode->isDirectory() : false;
+  return false;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 bool FSNode::isFile() const
 {
-  return _realNode ? _realNode->isFile() : false;
+  return true;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 bool FSNode::isReadable() const
 {
-  return _realNode ? _realNode->isReadable() : false;
+  return true;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 bool FSNode::isWritable() const
 {
-  return _realNode ? _realNode->isWritable() : false;
+  return false;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -338,36 +339,8 @@ size_t FSNode::getSize() const
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 size_t FSNode::read(ByteBuffer& buffer, size_t size) const
 {
-  size_t sizeRead = 0;
-
-  // File must actually exist
-  if (!(exists() && isReadable()))
-    throw runtime_error("File not found/readable");
-
-  // First let the private subclass attempt to open the file
-  if (_realNode && (sizeRead = _realNode->read(buffer, size)) > 0)
-    return sizeRead;
-
-  // Otherwise, the default behaviour is to read from a normal C++ ifstream
-  std::ifstream in(getPath(), std::ios::binary);
-  if (in)
-  {
-    in.seekg(0, std::ios::end);
-    sizeRead = static_cast<size_t>(in.tellg());
-    in.seekg(0, std::ios::beg);
-
-    if (sizeRead == 0)
-      throw runtime_error("Zero-byte file");
-    else if (size > 0)  // If a requested size to read is provided, honour it
-      sizeRead = std::min(sizeRead, size);
-
-    buffer = make_unique<uInt8[]>(sizeRead);
-    in.read(reinterpret_cast<char*>(buffer.get()), sizeRead);
-  }
-  else
-    throw runtime_error("File open/read error");
-
-  return sizeRead;
+  memcpy(buffer.get(), _buffer, size);
+  return 0;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

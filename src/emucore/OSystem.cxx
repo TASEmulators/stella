@@ -235,7 +235,7 @@ void OSystem::loadConfig(const Settings::Options& options)
 
   mySettings->load(options);
 
-  // // userDir is NOT affected by '-baseDir'and '-basedirinapp' params
+  // userDir is NOT affected by '-baseDir'and '-basedirinapp' params
   // string userDir = mySettings->getString("userdir");
   // if(userDir.empty())
   //   userDir = homeDir;
@@ -243,12 +243,12 @@ void OSystem::loadConfig(const Settings::Options& options)
   // if(!myUserDir.isDirectory())
   //   myUserDir.makeDir();
 
-  // Logger::instance().setLogParameters(mySettings->getInt("loglevel"),
-  //                                     mySettings->getBool("logtoconsole"));
-  // Logger::debug("Loading config options ...");
+  Logger::instance().setLogParameters(mySettings->getInt("loglevel"),
+                                      mySettings->getBool("logtoconsole"));
+  Logger::debug("Loading config options ...");
 
   // Get updated paths for all configuration files
-  // setConfigPaths();
+  setConfigPaths();
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
