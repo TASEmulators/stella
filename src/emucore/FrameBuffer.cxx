@@ -79,7 +79,7 @@ void FrameBuffer::initialize()
   myBackend = MediaFactory::createVideoBackend(myOSystem);
 
   // Get desktop resolution and supported renderers
-  myBackend->queryHardware(myFullscreenDisplays, myWindowedDisplays, myRenderers);
+  // myBackend->queryHardware(myFullscreenDisplays, myWindowedDisplays, myRenderers);
 
   const size_t numDisplays = myWindowedDisplays.size();
 
@@ -235,7 +235,7 @@ FBInitStatus FrameBuffer::createDisplay(string_view title, BufferType type,
                                         Common::Size size, bool honourHiDPI)
 {
   ++myInitializedCount;
-  myBackend->setTitle(title);
+  // myBackend->setTitle(title);
 
   // Always save, maybe only the mode of the window has changed
   saveCurrentWindowPosition();
@@ -319,7 +319,7 @@ FBInitStatus FrameBuffer::createDisplay(string_view title, BufferType type,
   myVidModeHandler.setImageSize(size);
 
   // Initialize video subsystem
-  const string pre_about = myBackend->about();
+  // const string pre_about = myBackend->about();
   const FBInitStatus status = applyVideoMode();
 
   // Only set phosphor once when ROM is started
@@ -359,16 +359,16 @@ FBInitStatus FrameBuffer::createDisplay(string_view title, BufferType type,
     return status;
 
   // Print initial usage message, but only print it later if the status has changed
-  if(myInitializedCount == 1)
-  {
-    Logger::info(myBackend->about());
-  }
-  else
-  {
-    const string post_about = myBackend->about();
-    if(post_about != pre_about)
-      Logger::info(post_about);
-  }
+  // if(myInitializedCount == 1)
+  // {
+  //   Logger::info(myBackend->about());
+  // }
+  // else
+  // {
+  //   const string post_about = myBackend->about();
+  //   if(post_about != pre_about)
+  //     Logger::info(post_about);
+  // }
 
   return status;
 }
@@ -1342,36 +1342,36 @@ FBInitStatus FrameBuffer::applyVideoMode()
   const bool oldPauseState = myOSystem.sound().pause(true);
   FBInitStatus status = FBInitStatus::FailNotSupported;
 
-  if(myBackend->setVideoMode(mode,
-      myOSystem.settings().getInt(getDisplayKey()),
-      myOSystem.settings().getPoint(getPositionKey()))
-    )
-  {
-    myActiveVidMode = mode;
-    status = FBInitStatus::Success;
+  // if(myBackend->setVideoMode(mode,
+  //     myOSystem.settings().getInt(getDisplayKey()),
+  //     myOSystem.settings().getPoint(getPositionKey()))
+  //   )
+  // {
+  //   myActiveVidMode = mode;
+  //   status = FBInitStatus::Success;
 
-    // Did we get the requested fullscreen state?
-    myOSystem.settings().setValue("fullscreen", fullScreen());
+  //   // Did we get the requested fullscreen state?
+  //   myOSystem.settings().setValue("fullscreen", fullScreen());
 
-    // Inform TIA surface about new mode, and update TIA settings
-    if(inTIAMode)
-    {
-      myTIASurface->initialize(myOSystem.console(), myActiveVidMode);
-      if(fullScreen())
-        myOSystem.settings().setValue("tia.fs_stretch",
-          myActiveVidMode.stretch == VideoModeHandler::Mode::Stretch::Fill);
-      else
-        myOSystem.settings().setValue("tia.zoom", myActiveVidMode.zoom);
+  //   // Inform TIA surface about new mode, and update TIA settings
+  //   if(inTIAMode)
+  //   {
+  //     myTIASurface->initialize(myOSystem.console(), myActiveVidMode);
+  //     if(fullScreen())
+  //       myOSystem.settings().setValue("tia.fs_stretch",
+  //         myActiveVidMode.stretch == VideoModeHandler::Mode::Stretch::Fill);
+  //     else
+  //       myOSystem.settings().setValue("tia.zoom", myActiveVidMode.zoom);
 
-      myBezel->apply();
-    }
+  //     myBezel->apply();
+  //   }
 
-    resetSurfaces();
-    setCursorState();
-    myPendingRender = true;
-  }
-  else
-    Logger::error("ERROR: Couldn't initialize video subsystem");
+  //   resetSurfaces();
+  //   setCursorState();
+  //   myPendingRender = true;
+  // }
+  // else
+  //   Logger::error("ERROR: Couldn't initialize video subsystem");
 
   // Restore sound settings
   myOSystem.sound().pause(oldPauseState);
@@ -1437,7 +1437,7 @@ void FrameBuffer::setCursorState()
   }
 
   myGrabMouse &= grabMouseAllowed();
-  myBackend->grabMouse(myGrabMouse);
+  // myBackend->grabMouse(myGrabMouse);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

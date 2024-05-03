@@ -22,7 +22,7 @@
 
 #include "bspf.hxx"
 
-#define BUFFER_SIZE 1024*1024*4
+#define BUFFER_SIZE 1024*128
 
 /*
  * The API described in this header is meant to allow for file system browsing in a
@@ -86,7 +86,7 @@ class FSNode
      * used (usually the root directory).
      */
     explicit FSNode(string_view path);
-
+    explicit FSNode(string_view path, uint8_t* buf, uint32_t size);
     /**
      * Assignment operators.
      */
@@ -307,15 +307,14 @@ class FSNode
     string getNameWithExt(string_view ext = "") const;
     string getPathWithExt(string_view ext = "") const;
 
-    uint8_t* getBuffer() const { return _buffer; }
+    uint8_t* _buffer;
 
   private:
     explicit FSNode(const AbstractFSNodePtr& realNode);
     AbstractFSNodePtr _realNode;
     void setPath(string_view path);
     std::string _path;
-    uint8_t* _buffer;
-    uint32_t _bufferPos = 0;
+    uint32_t _bufferSize = 0;
 };
 
 

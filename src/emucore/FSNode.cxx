@@ -27,7 +27,12 @@ FSNode::FSNode(const AbstractFSNodePtr& realNode)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 FSNode::FSNode(string_view path)
 {
-  _buffer = (uint8_t*)calloc(1, BUFFER_SIZE);
+  _path = path;
+}
+
+FSNode::FSNode(string_view path, uint8_t* buf, uint32_t size) : _buffer(buf)
+{
+  _bufferSize = size;
   _path = path;
 }
 
@@ -173,53 +178,7 @@ bool FSNode::getChildren(FSList& fslist, ListMode mode,
     fslist.emplace_back(parent);
   }
 
-  // And now add the rest of the entries
-  for (const auto& i: tmp)
-  {
-    if(isCancelled())
-      return false;
 
-  #if defined(ZIP_SUPPORT)
-    if (BSPF::endsWithIgnoreCase(i->getPath(), ".zip"))
-    {
-      // Force ZIP c'tor to be called
-      const AbstractFSNodePtr ptr = FSNodeFactory::create(
-          i->getPath(), FSNodeFactory::Type::ZIP);
-      const FSNode zipNode(ptr);
-
-      if(filter(zipNode))
-      {
-        if(!includeChildDirectories)
-          fslist.emplace_back(zipNode);
-        else
-        {
-          // filter by zip node but add file node
-          const FSNode node(i);
-          fslist.emplace_back(node);
-        }
-      }
-    }
-    else
-  #endif
-    {
-      const FSNode node(i);
-
-      if(includeChildDirectories)
-      {
-        if(i->isDirectory())
-          node.getChildren(fslist, mode, filter, includeChildDirectories, false, isCancelled);
-        else
-          // do not add directories in this mode
-          if(filter(node))
-            fslist.emplace_back(node);
-      }
-      else
-      {
-        if(filter(node))
-          fslist.emplace_back(node);
-      }
-    }
-  }
   return true;
 }
 
@@ -287,11 +246,7 @@ bool FSNode::hasParent() const
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 FSNode FSNode::getParent() const
 {
-  if (!_realNode)
     return *this;
-
-  const AbstractFSNodePtr node = _realNode->getParent();
-  return node ? FSNode(node) : *this;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -333,47 +288,23 @@ bool FSNode::rename(string_view newfile)
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 size_t FSNode::getSize() const
 {
-  return (_realNode && _realNode->exists()) ? _realNode->getSize() : 0;
+  return _bufferSize;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 size_t FSNode::read(ByteBuffer& buffer, size_t size) const
 {
+  printf("************Reading rom 1. Size: %lu\n", size);
   memcpy(buffer.get(), _buffer, size);
-  return 0;
+  return size;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 size_t FSNode::read(stringstream& buffer) const
 {
-  size_t sizeRead = 0;
-
-  // File must actually exist
-  if (!(exists() && isReadable()))
-    throw runtime_error("File not found/readable");
-
-  // First let the private subclass attempt to open the file
-  if (_realNode && (sizeRead = _realNode->read(buffer)) > 0)
-    return sizeRead;
-
-  // Otherwise, the default behaviour is to read from a normal C++ ifstream
-  // and convert to a stringstream
-  std::ifstream in(getPath());
-  if (in)
-  {
-    in.seekg(0, std::ios::end);
-    sizeRead = static_cast<size_t>(in.tellg());
-    in.seekg(0, std::ios::beg);
-
-    if (sizeRead == 0)
-      throw runtime_error("Zero-byte file");
-
-    buffer << in.rdbuf();
-  }
-  else
-    throw runtime_error("File open/read error");
-
-  return sizeRead;
+  printf("************Reading rom 2\n");
+  // memcpy(buffer, _buffer, _bufferSize);
+  return _bufferSize;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

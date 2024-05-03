@@ -119,7 +119,10 @@ Console::Console(OSystem& osystem, unique_ptr<Cartridge>& cart,
     myProperties{props},
     myCart{std::move(cart)},
     myAudioSettings{audioSettings}
-{
+{ 
+  
+  printf("************Creating Console A\n"); fflush(stdout);
+
   // Create subsystems for the console
   my6502 = make_unique<M6502>(myOSystem.settings());
   myRiot = make_unique<M6532>(*this, myOSystem.settings());
@@ -145,6 +148,8 @@ Console::Console(OSystem& osystem, unique_ptr<Cartridge>& cart,
 
   // Construct the system and components
   mySystem = make_unique<System>(myOSystem.random(), *my6502, *myRiot, *myTIA, *myCart);
+
+  printf("************Creating Console B\n"); fflush(stdout);
 
   // The real controllers for this console will be added later
   // For now, we just add dummy joystick controllers, since autodetection
@@ -177,21 +182,25 @@ Console::Console(OSystem& osystem, unique_ptr<Cartridge>& cart,
   // This must be done before the debugger is initialized
   setControllers(myProperties.get(PropType::Cart_MD5));
 
-  // Pause audio and clear framebuffer while autodetection runs
-  myOSystem.sound().pause(true);
-  myOSystem.frameBuffer().clear();
+  printf("************Creating Console C\n"); fflush(stdout);
 
-  if(myDisplayFormat == "AUTO" || myOSystem.settings().getBool("rominfo"))
-  {
-    autodetectFrameLayout();
+  // // Pause audio and clear framebuffer while autodetection runs
+  // myOSystem.sound().pause(true);
+  // myOSystem.frameBuffer().clear();
 
-    if(myProperties.get(PropType::Display_Format) == "AUTO")
-    {
-      autodetected = "*";
-      myCurrentFormat = 0;
-      myFormatAutodetected = true;
-    }
-  }
+  // if(myDisplayFormat == "AUTO" || myOSystem.settings().getBool("rominfo"))
+  // {
+  //   autodetectFrameLayout();
+
+  //   if(myProperties.get(PropType::Display_Format) == "AUTO")
+  //   {
+  //     autodetected = "*";
+  //     myCurrentFormat = 0;
+  //     myFormatAutodetected = true;
+  //   }
+  // }
+
+printf("************Creating Console C2\n"); fflush(stdout);
 
   myConsoleInfo.DisplayFormat = myDisplayFormat + autodetected;
 
@@ -233,6 +242,9 @@ Console::Console(OSystem& osystem, unique_ptr<Cartridge>& cart,
   // Reset the system to its power-on state
   mySystem->reset();
   myRiot->update();
+
+
+  printf("************Creating Console D\n"); fflush(stdout);
 
   // Finally, add remaining info about the console
   myConsoleInfo.CartName   = myProperties.get(PropType::Cart_Name);
@@ -736,8 +748,10 @@ FBInitStatus Console::initializeVideo(bool full)
     const bool devSettings = myOSystem.settings().getBool("dev.settings");
     const string title = string{"Stella "} + STELLA_VERSION +
                    ": \"" + myProperties.get(PropType::Cart_Name) + "\"";
-    fbstatus = myOSystem.frameBuffer().createDisplay(title,
-        BufferType::Emulator, size, false);
+    
+    // fbstatus = myOSystem.frameBuffer().createDisplay(title,
+    //     BufferType::Emulator, size, false);
+
     if(fbstatus != FBInitStatus::Success)
       return fbstatus;
 

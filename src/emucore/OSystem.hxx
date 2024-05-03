@@ -486,6 +486,9 @@ class OSystem
 
     virtual shared_ptr<CompositeKeyValueRepositoryAtomic> getHighscoreRepository() = 0;
 
+    double dispatchEmulation();
+    bool _renderingEnabled = true;
+
   protected:
 
     //////////////////////////////////////////////////////////////////////
@@ -666,7 +669,6 @@ class OSystem
     */
     static string getROMInfo(const Console& console);
 
-    double dispatchEmulation(EmulationWorker& emulationWorker);
 
     // Following constructors and assignment operators not supported
     OSystem(const OSystem&) = delete;

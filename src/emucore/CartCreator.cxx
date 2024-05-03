@@ -74,10 +74,15 @@ unique_ptr<Cartridge> CartCreator::create(const FSNode& file,
     const ByteBuffer& image, size_t size, string& md5,
     string_view dtype, Settings& settings)
 {
+  
+  printf("************Cart Creator A\n"); fflush(stdout);
+
   unique_ptr<Cartridge> cartridge;
   Bankswitch::Type type = Bankswitch::nameToType(dtype),
          detectedType = type;
   string id;
+
+  printf("************Cart Creator A1\n"); fflush(stdout);
 
   // Collect some info about the ROM
   ostringstream buf;
@@ -88,11 +93,15 @@ unique_ptr<Cartridge> CartCreator::create(const FSNode& file,
   if(typeByName != Bankswitch::Type::_AUTO)
     type = detectedType = typeByName;
 
+  printf("************Cart Creator A2\n"); fflush(stdout);
+
   // See if we should try to auto-detect the cartridge type
   // If we ask for extended info, always do an autodetect
   if(type == Bankswitch::Type::_AUTO || settings.getBool("rominfo"))
   {
+    printf("************Cart Creator A3\n"); fflush(stdout);
     detectedType = CartDetector::autodetectType(image, size);
+    printf("************Cart Creator A4\n"); fflush(stdout);
     if(type != Bankswitch::Type::_AUTO && type != detectedType)
       cerr << "Auto-detection not consistent: "
            << Bankswitch::typeToName(type) << ", "
@@ -103,6 +112,8 @@ unique_ptr<Cartridge> CartCreator::create(const FSNode& file,
   }
   else
     buf << Bankswitch::typeToName(type);
+
+  printf("************Cart Creator B\n"); fflush(stdout);
 
   // Check for multicart first; if found, get the correct part of the image
   bool validMultiSize = true;
@@ -160,6 +171,8 @@ unique_ptr<Cartridge> CartCreator::create(const FSNode& file,
       break;
   }
 
+printf("************Cart Creator C\n"); fflush(stdout);
+
   if(numMultiRoms)
   {
     if(validMultiSize)
@@ -171,6 +184,8 @@ unique_ptr<Cartridge> CartCreator::create(const FSNode& file,
     buf << id;
   }
 
+ printf("************Cart Creator D\n"); fflush(stdout);
+
   if(size < 1_KB)
     buf << " (" << size << "B";
   else
@@ -180,6 +195,8 @@ unique_ptr<Cartridge> CartCreator::create(const FSNode& file,
   buf << ") ";
 
   cartridge->setAbout(buf.str(), Bankswitch::typeToName(type), id);
+
+printf("************Cart Creator E\n"); fflush(stdout);
 
   return cartridge;
 }
