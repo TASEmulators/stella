@@ -927,7 +927,7 @@ float OSystem::frameRate() const
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-double OSystem::dispatchEmulation()
+double OSystem::dispatchEmulation(bool doRender)
 {
 
   if (!myConsole) return 0.;
@@ -937,7 +937,7 @@ double OSystem::dispatchEmulation()
   DispatchResult dispatchResult;
 
   bool framePending = false;
-  if (_renderingEnabled)
+  if (doRender)
   {
     // Check whether we have a frame pending for rendering...
     framePending = tia.newFramePending();
@@ -951,7 +951,7 @@ double OSystem::dispatchEmulation()
 
   tia.update(timing.maxCyclesPerTimeslice());
 
-  if (_renderingEnabled)
+  if (doRender)
   {
     // Render the frame. This may block, but emulation will continue to run on
     // the worker, so the audio pipeline is kept fed :)
@@ -988,7 +988,7 @@ void OSystem::mainLoop()
 
     if (myEventHandler->state() == EventHandlerState::EMULATION)
       // Dispatch emulation and render frame (if applicable)
-      timesliceSeconds = dispatchEmulation();
+      timesliceSeconds = dispatchEmulation(true);
     else if(myEventHandler->state() == EventHandlerState::PLAYBACK)
     {
       // Playback at emulation speed
