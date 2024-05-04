@@ -486,7 +486,7 @@ class OSystem
 
     virtual shared_ptr<CompositeKeyValueRepositoryAtomic> getHighscoreRepository() = 0;
 
-    double dispatchEmulation(bool doRender);
+    double dispatchEmulation();
 
   protected:
 

@@ -927,7 +927,7 @@ float OSystem::frameRate() const
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-double OSystem::dispatchEmulation(bool doRender)
+double OSystem::dispatchEmulation()
 {
 
   if (!myConsole) return 0.;
@@ -937,26 +937,20 @@ double OSystem::dispatchEmulation(bool doRender)
   DispatchResult dispatchResult;
 
   bool framePending = false;
-  if (doRender)
-  {
-    // Check whether we have a frame pending for rendering...
-    framePending = tia.newFramePending();
-    // ... and copy it to the frame buffer. It is important to do this before
-    // the worker is started to avoid racing.
-    if (framePending) {
-      myFpsMeter.render(tia.framesSinceLastRender());
-      tia.renderToFrameBuffer();
-    }
+  // Check whether we have a frame pending for rendering...
+  framePending = tia.newFramePending();
+  // ... and copy it to the frame buffer. It is important to do this before
+  // the worker is started to avoid racing.
+  if (framePending) {
+    myFpsMeter.render(tia.framesSinceLastRender());
+    tia.renderToFrameBuffer();
   }
 
   tia.update(timing.maxCyclesPerTimeslice());
 
-  if (doRender)
-  {
-    // Render the frame. This may block, but emulation will continue to run on
-    // the worker, so the audio pipeline is kept fed :)
-    if (framePending) myFrameBuffer->updateInEmulationMode(myFpsMeter.fps());
-  }
+  // Render the frame. This may block, but emulation will continue to run on
+  // the worker, so the audio pipeline is kept fed :)
+  // if (framePending) myFrameBuffer->updateInEmulationMode(myFpsMeter.fps());
 
   // Return the 6507 time used in seconds
   return 0;
@@ -988,7 +982,7 @@ void OSystem::mainLoop()
 
     if (myEventHandler->state() == EventHandlerState::EMULATION)
       // Dispatch emulation and render frame (if applicable)
-      timesliceSeconds = dispatchEmulation(true);
+      timesliceSeconds = dispatchEmulation();
     else if(myEventHandler->state() == EventHandlerState::PLAYBACK)
     {
       // Playback at emulation speed
