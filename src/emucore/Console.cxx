@@ -184,13 +184,13 @@ Console::Console(OSystem& osystem, unique_ptr<Cartridge>& cart,
 
   printf("************Creating Console C\n"); fflush(stdout);
 
-  // // Pause audio and clear framebuffer while autodetection runs
+  // Pause audio and clear framebuffer while autodetection runs
   // myOSystem.sound().pause(true);
   // myOSystem.frameBuffer().clear();
 
-  // if(myDisplayFormat == "AUTO" || myOSystem.settings().getBool("rominfo"))
-  // {
-  //   autodetectFrameLayout();
+  if(myDisplayFormat == "AUTO" || myOSystem.settings().getBool("rominfo"))
+  {
+    autodetectFrameLayout();
 
   //   if(myProperties.get(PropType::Display_Format) == "AUTO")
   //   {
@@ -198,7 +198,7 @@ Console::Console(OSystem& osystem, unique_ptr<Cartridge>& cart,
   //     myCurrentFormat = 0;
   //     myFormatAutodetected = true;
   //   }
-  // }
+  }
 
 printf("************Creating Console C2\n"); fflush(stdout);
 
