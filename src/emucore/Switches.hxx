@@ -114,6 +114,9 @@ class Switches : public Serializable
     */
     void setRightDifficultyA(bool setToA);
 
+    void setReset(bool setToA);
+    void clear();
+
     /**
       Toggle between 2600 and 7800 mode depending on settings.
 

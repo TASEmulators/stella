@@ -58,6 +58,7 @@ Switches::Switches(const Event& event, const Properties& props,
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void Switches::update()
 {
+  printf("Updating switches\n");
   if(myIs7800)
   {
     if(myEvent.get(Event::Console7800Pause) != 0)
@@ -153,6 +154,24 @@ void Switches::setRightDifficultyA(bool setToA)
   {
     mySwitches &= ~0x80;
   }
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void Switches::setReset(bool setToA)
+{
+  if(setToA)
+  {
+    mySwitches |= 0x01;
+  }
+  else
+  {
+    mySwitches &= ~0x01;
+  }
+}
+
+void Switches::clear()
+{
+  mySwitches = 0;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
