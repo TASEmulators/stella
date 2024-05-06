@@ -17,6 +17,7 @@
 
 #include "Audio.hxx"
 #include "AudioQueue.hxx"
+#include <BizhawkInterface.hxx>
 
 #include <cmath>
 
@@ -78,6 +79,8 @@ void Audio::phase1()
 void Audio::addSample(uInt8 sample0, uInt8 sample1)
 {
   if(!myAudioQueue) return;
+
+  soundbuffer[nsamples++] = (uint16_t)sample0 + (((uint16_t)sample1) << 8);
 
   if(myAudioQueue->isStereo()) {
     myCurrentFragment[static_cast<size_t>(2 * mySampleIndex)] =

@@ -75,7 +75,6 @@ uInt32 AudioQueue::fragmentSize() const
 Int16* AudioQueue::enqueue(Int16* fragment)
 {
   const lock_guard<mutex> guard(myMutex);
-
   Int16* newFragment = nullptr;
 
   if (!fragment) {

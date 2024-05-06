@@ -69,6 +69,8 @@
     #include "SoundLIBRETRO.hxx"
   #elif defined(SDL_SUPPORT)
     #include "SoundSDL2.hxx"
+  #elif defined(__USE_BIZHAWK)
+    #include "SoundBizhawk.hxx"
   #else
     #include "SoundNull.hxx"
   #endif
@@ -156,7 +158,7 @@ class MediaFactory
       #elif defined(SOUND_SUPPORT) && defined(SDL_SUPPORT)
         return make_unique<SoundSDL2>(osystem, audioSettings);
       #elif defined(__USE_BIZHAWK)
-        return make_unique<SoundBizhawk>(osystem);        
+        return make_unique<SoundBizhawk>(osystem, audioSettings);        
       #else
         return make_unique<SoundNull>(osystem);
       #endif
