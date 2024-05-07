@@ -80,15 +80,23 @@ void Audio::addSample(uInt8 sample0, uInt8 sample1)
 {
   if(!myAudioQueue) return;
 
-  soundbuffer[nsamples++] = (uint16_t)sample0 + (((uint16_t)sample1) << 8);
+  if(myAudioQueue->isStereo())
+  {
+    soundbuffer[2 * nsamples + 0] = myMixingTableSum[sample0];
+    soundbuffer[2 * nsamples + 1] = myMixingTableSum[sample1];
+    nsamples++;
 
-  if(myAudioQueue->isStereo()) {
     myCurrentFragment[static_cast<size_t>(2 * mySampleIndex)] =
       myMixingTableIndividual[sample0];
     myCurrentFragment[static_cast<size_t>(2 * mySampleIndex + 1)] =
       myMixingTableIndividual[sample1];
   }
-  else {
+  else
+  {
+    soundbuffer[2 * nsamples + 0] = myMixingTableSum[sample0 + sample1];
+    soundbuffer[2 * nsamples + 1] = myMixingTableSum[sample0 + sample1];
+    nsamples++;
+
     myCurrentFragment[mySampleIndex] = myMixingTableSum[sample0 + sample1];
   }
 

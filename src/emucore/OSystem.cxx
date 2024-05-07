@@ -164,6 +164,9 @@ bool OSystem::initialize(const Settings::Options& options)
 
   myAudioSettings = make_unique<AudioSettings>(*mySettings);
 
+  auto sampleRate = myAudioSettings-> sampleRate();
+  printf("Sample Rate: %u\n", sampleRate);
+
   // Create the sound object; the sound subsystem isn't actually
   // opened until needed, so this is non-blocking (on those systems
   // that only have a single sound device (no hardware mixing))
