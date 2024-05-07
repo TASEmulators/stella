@@ -177,6 +177,8 @@ void M6532::installDelegate(System& system, Device& device)
     }
 }
 
+extern void  real_input_callback(); 
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 uInt8 M6532::peek(uInt16 addr)
 {
@@ -192,6 +194,7 @@ uInt8 M6532::peek(uInt16 addr)
   {
     case 0x00:    // SWCHA - Port A I/O Register (Joystick)
     {
+      real_input_callback();
       const uInt8 value = (myConsole.leftController().read() << 4) |
                            myConsole.rightController().read();
 
@@ -209,6 +212,7 @@ uInt8 M6532::peek(uInt16 addr)
 
     case 0x02:    // SWCHB - Port B I/O Register (Console switches)
     {
+      real_input_callback();
       return (myOutB | ~myDDRB) & (myConsole.switches().read() | myDDRB);
     }
 
