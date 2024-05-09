@@ -121,8 +121,6 @@ Console::Console(OSystem& osystem, unique_ptr<Cartridge>& cart,
     myAudioSettings{audioSettings}
 { 
   
-  printf("************Creating Console A\n"); fflush(stdout);
-
   // Create subsystems for the console
   my6502 = make_unique<M6502>(myOSystem.settings());
   myRiot = make_unique<M6532>(*this, myOSystem.settings());
@@ -148,8 +146,6 @@ Console::Console(OSystem& osystem, unique_ptr<Cartridge>& cart,
 
   // Construct the system and components
   mySystem = make_unique<System>(myOSystem.random(), *my6502, *myRiot, *myTIA, *myCart);
-
-  printf("************Creating Console B\n"); fflush(stdout);
 
   // The real controllers for this console will be added later
   // For now, we just add dummy joystick controllers, since autodetection
@@ -182,8 +178,6 @@ Console::Console(OSystem& osystem, unique_ptr<Cartridge>& cart,
   // This must be done before the debugger is initialized
   setControllers(myProperties.get(PropType::Cart_MD5));
 
-  printf("************Creating Console C\n"); fflush(stdout);
-
   // Pause audio and clear framebuffer while autodetection runs
   // myOSystem.sound().pause(true);
   // myOSystem.frameBuffer().clear();
@@ -199,8 +193,6 @@ Console::Console(OSystem& osystem, unique_ptr<Cartridge>& cart,
   //     myFormatAutodetected = true;
   //   }
   }
-
-printf("************Creating Console C2\n"); fflush(stdout);
 
   myConsoleInfo.DisplayFormat = myDisplayFormat + autodetected;
 
@@ -242,9 +234,6 @@ printf("************Creating Console C2\n"); fflush(stdout);
   // Reset the system to its power-on state
   mySystem->reset();
   myRiot->update();
-
-
-  printf("************Creating Console D\n"); fflush(stdout);
 
   // Finally, add remaining info about the console
   myConsoleInfo.CartName   = myProperties.get(PropType::Cart_Name);

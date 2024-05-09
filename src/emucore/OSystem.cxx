@@ -164,9 +164,6 @@ bool OSystem::initialize(const Settings::Options& options)
 
   myAudioSettings = make_unique<AudioSettings>(*mySettings);
 
-  auto sampleRate = myAudioSettings-> sampleRate();
-  printf("Sample Rate: %u\n", sampleRate);
-
   // Create the sound object; the sound subsystem isn't actually
   // opened until needed, so this is non-blocking (on those systems
   // that only have a single sound device (no hardware mixing))
@@ -465,8 +462,6 @@ string OSystem::createConsole(const FSNode& rom, string_view md5sum, bool newrom
 
   myEventHandler->handleConsoleStartupEvents();
 
-  printf("************Create Console A\n"); fflush(stdout);
-
   try
   {
     closeConsole();
@@ -479,11 +474,8 @@ string OSystem::createConsole(const FSNode& rom, string_view md5sum, bool newrom
     return buf.str();
   }
 
-  printf("************Create Console B\n"); fflush(stdout);
-
   if(myConsole)
   {
-    printf("************Create Console B12\n"); fflush(stdout);
   #ifdef DEBUGGER_SUPPORT
     myDebugger = make_unique<Debugger>(*this, *myConsole);
     myDebugger->initialize();
@@ -493,25 +485,16 @@ string OSystem::createConsole(const FSNode& rom, string_view md5sum, bool newrom
     myCheatManager->loadCheats(myRomMD5);
   #endif
 
-    printf("************Create Console B2\n"); fflush(stdout);
-
     myEventHandler->reset(EventHandlerState::EMULATION);
     myEventHandler->setMouseControllerMode(mySettings->getString("usemouse"));
 
-    printf("************Create Console B3\n"); fflush(stdout);
-
     if(createFrameBuffer() != FBInitStatus::Success)  // Takes care of initializeVideo()
     {
-      printf("************Create Console B4\n"); fflush(stdout);
-
       Logger::error("ERROR: Couldn't create framebuffer for console");
       myEventHandler->reset(EventHandlerState::LAUNCHER);
       return "ERROR: Couldn't create framebuffer for console";
     }
     myConsole->initializeAudio();
-
-  printf("************Create Console C\n"); fflush(stdout);
-
 
     const string saveOnExit = settings().getString("saveonexit");
     const bool devSettings = settings().getBool("dev.settings");
@@ -531,9 +514,6 @@ string OSystem::createConsole(const FSNode& rom, string_view md5sum, bool newrom
           myConsole->cartridge().detectedType() + ", loading ROM" + id);
     }
 
-      printf("************Create Console D\n"); fflush(stdout);
-
-
     buf << "Game console created:\n"
         << "  ROM file: " << myRomFile.getShortPath() << '\n';
     const FSNode propsFile(myRomFile.getPathWithExt(".pro"));
@@ -541,9 +521,6 @@ string OSystem::createConsole(const FSNode& rom, string_view md5sum, bool newrom
       buf << "  PRO file: " << propsFile.getShortPath() << '\n';
     buf << '\n' << getROMInfo(*myConsole);
     Logger::info(buf.str());
-
-  printf("************Create Console E\n"); fflush(stdout);
-
 
     myFrameBuffer->setCursorState();
 
@@ -603,9 +580,6 @@ string OSystem::createConsole(const FSNode& rom, string_view md5sum, bool newrom
       Logger::info("PlusROM Nick: " + settings().getString("plusroms.nick") + ", ID: " + id);
     }
   }
-
-
-  printf("************Outside create console\n"); fflush(stdout);
 
   return EmptyString;
 }
@@ -701,8 +675,6 @@ unique_ptr<Console> OSystem::openConsole(const FSNode& romfile, string& md5)
 {
   unique_ptr<Console> console;
 
-  printf("************Open Console A\n"); fflush(stdout);
-
   // Open the cartridge image and read it in
   ByteBuffer image;
   size_t size = 0;
@@ -713,8 +685,6 @@ unique_ptr<Console> OSystem::openConsole(const FSNode& romfile, string& md5)
     Properties props;
     myPropSet->getMD5(md5, props);
 
-    printf("************Open Console B\n"); fflush(stdout);
-
     // Local helper method
     const auto CMDLINE_PROPS_UPDATE = [&](string_view name, PropType prop)
     {
@@ -722,14 +692,9 @@ unique_ptr<Console> OSystem::openConsole(const FSNode& romfile, string& md5)
       if(!s.empty()) props.set(prop, s);
     };
 
-    printf("************Open Console C\n"); fflush(stdout);
-
     CMDLINE_PROPS_UPDATE("bs", PropType::Cart_Type);
     CMDLINE_PROPS_UPDATE("type", PropType::Cart_Type);
     CMDLINE_PROPS_UPDATE("startbank", PropType::Cart_StartBank);
-
-
-    printf("************Open Console D\n"); fflush(stdout);
 
     // Now create the cartridge
     string cartmd5 = md5;
@@ -742,22 +707,14 @@ unique_ptr<Console> OSystem::openConsole(const FSNode& romfile, string& md5)
         os.frameBuffer().showTextMessage(msg);
     };
 
-    printf("************Open Console E\n"); fflush(stdout);
-
     unique_ptr<Cartridge> cart =
       CartCreator::create(romfile, image, size, cartmd5, type, *mySettings);
 
-    printf("************Open Console E1\n"); fflush(stdout);
-
     cart->setMessageCallback(callback);
-
-    printf("************Open Console F\n"); fflush(stdout);
 
     // Some properties may not have a name set; we can't leave it blank
     if(props.get(PropType::Cart_Name) == EmptyString)
       props.set(PropType::Cart_Name, romfile.getNameWithExt(""));
-
-    printf("************Open Console G\n"); fflush(stdout);
 
     // It's possible that the cart created was from a piece of the image,
     // and that the md5 (and hence the cart) has changed
@@ -771,8 +728,6 @@ unique_ptr<Console> OSystem::openConsole(const FSNode& romfile, string& md5)
     //     myPropSet->insert(props, false);
     //   }
     // }
-
-    printf("************Open Console F\n"); fflush(stdout);
 
     CMDLINE_PROPS_UPDATE("sp", PropType::Console_SwapPorts);
     CMDLINE_PROPS_UPDATE("lc", PropType::Controller_Left);
@@ -808,14 +763,11 @@ unique_ptr<Console> OSystem::openConsole(const FSNode& romfile, string& md5)
     CMDLINE_PROPS_UPDATE("pycenter", PropType::Controller_PaddlesYCenter);
     CMDLINE_PROPS_UPDATE("bezelname", PropType::Bezel_Name);
 
-    printf("************Open Console G\n"); fflush(stdout);
-
     // Finally, create the cart with the correct properties
     if(cart)
       console = make_unique<Console>(*this, cart, props, *myAudioSettings);
   }
 
-  printf("************Returning console: %p\n", console.get()); fflush(stdout);
   return console;
 }
 
@@ -839,12 +791,10 @@ ByteBuffer OSystem::openROM(const FSNode& rom, string& md5, size_t& size)
   // It not only loads a ROM and creates an array with its contents,
   // but also adds a properties entry if the one for the ROM doesn't
   // contain a valid name
- printf("************Open ROM A\n"); fflush(stdout);
   size = rom.getSize();
   ByteBuffer image = openROM(rom, size, true);  // handle error message here
   if(image)
   {
-    printf("************Open ROM B\n"); fflush(stdout);
     // If we get to this point, we know we have a valid file to open
     // Now we make sure that the file has a valid properties entry
     // To save time, only generate an MD5 if we really need one
@@ -871,13 +821,10 @@ string OSystem::getROMMD5(const FSNode& rom)
 ByteBuffer OSystem::openROM(const FSNode& rom, size_t& size,
                             bool showErrorMessage)
 {
-  printf("************Open ROMSub A\n"); fflush(stdout);
   // First check if this is a valid ROM filename
   const bool isValidROM = rom.isFile() && Bankswitch::isValidRomName(rom);
   if(!isValidROM && showErrorMessage)
     throw runtime_error("Unrecognized ROM file type");
-
-printf("************Open ROMSub B\n"); fflush(stdout);
 
   // Next check for a proper file size
   // Streaming ROMs read only a portion of the file
@@ -896,13 +843,9 @@ printf("************Open ROMSub B\n"); fflush(stdout);
       return nullptr;
   }
 
-  printf("************Open ROMSub C\n"); fflush(stdout);
-
   // Now we can try to open the file
   ByteBuffer image = std::make_unique<uint8_t[]>(rom.getSize());
-    printf("************Open ROMSub D\n"); fflush(stdout);
      rom.read(image, rom.getSize());
-    printf("************Open ROMSub E\n"); fflush(stdout);  
     
   return image;
 }

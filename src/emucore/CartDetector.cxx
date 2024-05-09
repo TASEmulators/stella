@@ -24,8 +24,6 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Bankswitch::Type CartDetector::autodetectType(const ByteBuffer& image, size_t size)
 {
-  printf("************Auto detecting type. image %p, size: %lu\n", image.get(), size); fflush(stdout);
-
   // Guess type based on size
   Bankswitch::Type type = Bankswitch::Type::_AUTO;
 

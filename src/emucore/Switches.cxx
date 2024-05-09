@@ -58,7 +58,6 @@ Switches::Switches(const Event& event, const Properties& props,
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void Switches::update()
 {
-  printf("Updating switches\n");
   if(myIs7800)
   {
     if(myEvent.get(Event::Console7800Pause) != 0)

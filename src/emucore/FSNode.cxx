@@ -294,7 +294,6 @@ size_t FSNode::getSize() const
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 size_t FSNode::read(ByteBuffer& buffer, size_t size) const
 {
-  printf("************Reading rom 1. Size: %lu\n", size);
   memcpy(buffer.get(), _buffer, size);
   return size;
 }
@@ -302,7 +301,6 @@ size_t FSNode::read(ByteBuffer& buffer, size_t size) const
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 size_t FSNode::read(stringstream& buffer) const
 {
-  printf("************Reading rom 2\n");
   // memcpy(buffer, _buffer, _bufferSize);
   return _bufferSize;
 }
