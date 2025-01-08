@@ -115,6 +115,7 @@ class Switches : public Serializable
     void setRightDifficultyA(bool setToA);
 
     void setReset(bool setToA);
+    void setSelect(bool setSel);
     void clear();
 
     /**

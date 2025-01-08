@@ -168,6 +168,20 @@ void Switches::setReset(bool setToA)
   }
 }
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void Switches::setSelect(bool setSel)
+{
+  if(setSel)
+  {
+    mySwitches |= 0x02;
+  }
+  else
+  {
+    mySwitches &= ~0x02;
+  }
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void Switches::clear()
 {
   mySwitches = 0;
